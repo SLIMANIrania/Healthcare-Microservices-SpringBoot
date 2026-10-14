@@ -1,0 +1,43 @@
+server:
+  port: 7777
+
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8888/eureka
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: route1
+              predicates:
+                - Path=/service-patient/**
+              filters:
+                - RewritePath=/service-patient/(?<s>.*),  /${s}
+                - name: CircuitBreaker
+                  args:
+                    name: FallBack-mspatient
+                    fallbackuri: forward:/defaultPatients
+              uri: lb://ms-patient
+
+            - id: route2
+              predicates:
+                - Path=/service-remboursement/**
+              filters:
+                - RewritePath=/service-remboursement/(?<s>.*),  /${s}
+              uri: lb://ms-remboursement
+
+            - id: route3
+              predicates:
+                - Path=/service-ordonnance/**
+              filters:
+                - RewritePath=/service-ordonnance/(?<s>.*),  /${s}
+              uri: lb://ms-ordonnance

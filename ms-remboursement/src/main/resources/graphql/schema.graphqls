@@ -1,0 +1,17 @@
+type Query {
+    getRemboursementsByAssure(idAssure: ID!): [Remboursement!]!
+    getRemboursementByOrdonnance(idOrdonnance: ID!): Remboursement
+}
+
+type Assure {
+    idAssure: ID!
+    numeroSecuriteSocial: String
+    plafondRemboursement: Float
+}
+
+type Remboursement {
+    idRemboursement: ID!
+    dateRemboursement: String
+    montant: Float
+    idOrdonnance: ID!
+}
